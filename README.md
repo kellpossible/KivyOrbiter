@@ -13,18 +13,18 @@ Example Output
 
 ###orbitstest.py testing output###
 
-![Euler](Examples/Euler.png)
+![Euler](Examples/Euler.png)  
 Euler Integration
 
-![Kepler](Examples/Kepler.png)
+![Kepler](Examples/Kepler.png)  
 Kepler Integration
 
-![Verlet](Examples/Verlet.png)
+![Verlet](Examples/Verlet.png)  
 Verlet Integration
 
-![TCVerlet](Examples/TCVerlet.png)
+![TCVerlet](Examples/TCVerlet.png)  
 TCVerlet Integration
 
-![RK4](Examples/RK4.png)
+![RK4](Examples/RK4.png)  
 RK4 Integration
 
