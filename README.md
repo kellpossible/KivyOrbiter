@@ -11,6 +11,12 @@ Key Features
 Example Output
 -----------
 
+### Kivy Application ###
+![EnginesFiringScreenshot](Examples/EngineScreenShot.png)
+![OrbitScreenshot](Examples/OrbitScreenShot.png)
+
+To use the kivy application, place finger on the screen and move in the direction desired for engine vector
+
 ###orbitstest.py testing output###
 
 ![Euler](Examples/Euler.png)  
