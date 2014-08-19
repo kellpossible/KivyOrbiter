@@ -1,5 +1,6 @@
 from kivy.app import App
 from kivy.uix.widget import Widget
+from kivy.uix.label import Label
 from kivy.graphics import Color, Ellipse, Line, Triangle, Rectangle, Point
 from kivy.clock import Clock
 from kivy.config import Config
@@ -30,18 +31,41 @@ class Ship(PhysicsObject):
 			self.direction = Vector3.Y()
 
 		self.engine_power = 0.0
-		self.engine_rating = 1e6 
+		self.engine_rating = 1e6
+		self.isp = 1e6
+		self.fuel = 100.0
 
 	def copy_motion(self, other):
 		super(Ship, self).copy_motion(other)
 		self.engine_power = other.engine_power
 		self.direction = other.direction
 
+	def get_effective_engine_power(self):
+		if self.fuel > 0.0:
+			return self.engine_power
+		else:
+			return 0.0
+
+	def get_engine_force_mag(self):
+		return self.get_effective_engine_power() * self.engine_rating
+
 	def get_engine_force(self):
-		return self.direction.fmul(self.engine_power * self.engine_rating)
+		return self.direction.fmul(self.get_engine_force_mag())
 
 	def get_force(self):
 		return self.get_engine_force()
+
+	def get_fuel_usage(self):
+		return self.get_engine_force_mag() / self.isp
+
+	def update(self, dt):
+		fuel_dt = self.get_fuel_usage() * dt
+		if fuel_dt > 0.0:
+			if self.fuel - fuel_dt >= 0:
+				self.fuel -= fuel_dt
+			else:
+				self.fuel = 0.0
+			print(self.fuel)
 
 class OrbitPath(Queue):
 	def __init__(self, physics_object):
@@ -224,7 +248,7 @@ class RK4PreviewOrbit(RK4Orbit):
 	def get_force_realtime(self, status):
 		force = Vector3()
 		force = force.add(self.f_o1_on_o2(self.m_big, status))
-		force = force.add(status.get_force())
+		force = force.add(self.m_small.get_force())
 		return force
 
 
@@ -410,7 +434,7 @@ class Viewport(Widget):
 					#Engine Fire
 					Color(1, 0.4, 0.4)
 					fire_size_x = self.ship_scale*0.3
-					fire_size_y = self.ship_scale*1e-1*obj.engine_power
+					fire_size_y = self.ship_scale*1e-1*obj.get_effective_engine_power()
 					fire_pos_top_left = ship_tri_back.add(ship_dir_left.fmul(fire_size_x/2.0))
 					fire_pos_top_right = ship_tri_back.add(ship_dir_left.fmul(-fire_size_x/2.0))
 					fire_pos_bottom = ship_tri_back.add(ship_dir.fmul(-fire_size_y))
@@ -434,7 +458,9 @@ class Viewport(Widget):
 						engine_pos_bottom_left.x, engine_pos_bottom_left.y,
 						engine_pos_bottom_right.x, engine_pos_bottom_right.y))
 
-					
+
+def to_label_str(number):
+	return "{0:.2f}".format(number)			
 
 class KivyOrbiter(Widget):
 	def __init__(self, **kwargs):
@@ -471,8 +497,9 @@ class KivyOrbiter(Widget):
 		self.ship_orbit_path = OrbitPath(self.ship)
 		self.viewport = Viewport(render_objects=[self.planet, self.ship_orbit_path, self.ship], world_scale=5e-6)
 
-
-		self.add_widget(self.viewport)
+		self.fuel_label = Label(text=str(to_label_str(self.ship.fuel)), color=[1,1,1,1])
+		self.add_widget(self.viewport, 0)
+		self.add_widget(self.fuel_label, 1)
 		Clock.schedule_interval(self.update, 1.0/30.0)
 
 	def on_touch_down(self, touch):
@@ -523,6 +550,9 @@ class KivyOrbiter(Widget):
 			self.update_orbit(self.physics_dt)
 		else:
 			self.ship.engine_power = 0.0
+
+		self.ship.update(dt)
+		self.fuel_label.text = str(to_label_str(self.ship.fuel))
 		
 		self.viewport.update(dt)
 
