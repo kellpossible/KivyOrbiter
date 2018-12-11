@@ -17,6 +17,18 @@ Example Output
 
 To use the kivy application, place finger on the screen and move in the direction desired for engine vector
 
+### Installation ###
+
+You will need `kivy` installed in order to run this application. Instructions for all platforms can be found at https://kivy.org/#download
+
+### Running ###
+
+After following the installation instructions, you can run the application using the following command:
+
+```
+python main.py
+```
+
 ###orbitstest.py testing output###
 
 ![Euler](Examples/Euler.png)  

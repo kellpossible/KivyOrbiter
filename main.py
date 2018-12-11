@@ -357,7 +357,7 @@ class Star(object):
 
 class Viewport(Widget):
 	def __init__(self, **kwargs):
-		super(Viewport, self).__init__(**kwargs)
+		super(Viewport, self).__init__()
 		self.render_objects = []
 		if 'render_objects' in kwargs:
 			self.render_objects += kwargs['render_objects']
@@ -463,10 +463,9 @@ def to_label_str(number):
 	return "{0:.2f}".format(number)			
 
 class KivyOrbiter(Widget):
-	def __init__(self, **kwargs):
-		super(KivyOrbiter, self).__init__(**kwargs)
+	def __init__(self):
+		super(KivyOrbiter, self).__init__()
 
-		self.app = kwargs['app']
 		self.ship_grab = False
 		self.ship_grab_vec = Vector3()
 		self.ship_grab_init_pos = Vector3()
@@ -565,7 +564,7 @@ class KivyOrbiter(Widget):
 
 class KivyOrbiterApp(App):
 	def build(self):
-		return KivyOrbiter(app=self)
+		return KivyOrbiter()
 
 
 if __name__ == '__main__':
